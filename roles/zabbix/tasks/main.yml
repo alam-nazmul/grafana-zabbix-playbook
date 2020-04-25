@@ -34,7 +34,6 @@
   yum:
     name: "{{ item }}"
     state: present
-    update_cache: yes
   loop:
     - zabbix-server-mysql
     - zabbix-agent
