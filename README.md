@@ -1,4 +1,4 @@
-# Ansible Playbook Redmine
+# Grafana Zabbix Ansible Playbook
 
 Ansible playbook + Vagrantfile for provisioning [Grafana](https://grafana.com/) and [Zabbix](https://zabbix.org/wiki/Main_Page) to a CentOS server. The playbook also installs H2O, PHP and mySQL.
 
