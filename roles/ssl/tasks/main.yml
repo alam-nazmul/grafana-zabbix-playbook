@@ -1,0 +1,41 @@
+---
+- name: Install pyOpenSSL rpm file
+  yum:
+    name: "http://www.nosuchhost.net/~cheese/fedora/packages/epel-7/x86_64/python2-pyOpenSSL-16.2.0-3.el7.noarch.rpm"
+    state: present
+
+- name: Ensure python OpenSSL dependencies are installed
+  yum:
+    name: python2-pyOpenSSL
+    state: present
+    update_cache: yes
+
+- name: Create certs root
+  file:
+    path: "/etc/ssl/private"
+    state: directory
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+    mode: '0755'
+
+- name: generate an OpenSSL private key
+  openssl_privatekey:
+    path: /etc/ssl/private/privkey.pem
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+
+- name: generate an OpenSSL CSR
+  openssl_csr:
+    path: /etc/ssl/private/{{ http_host }}.csr
+    privatekey_path: /etc/ssl/private/privkey.pem
+    common_name: "{{ http_host }}"
+    subject_alt_name: 'DNS:{{ http_host }}'
+
+- name: generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: /etc/ssl/private/{{ http_host }}.pem
+    privatekey_path: /etc/ssl/private/privkey.pem
+    csr_path: /etc/ssl/private/{{ http_host }}.csr
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+    provider: selfsigned

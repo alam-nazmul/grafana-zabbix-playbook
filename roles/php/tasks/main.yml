@@ -1,0 +1,45 @@
+---
+- name: Add remi repository
+  yum_repository:
+    name: "{{ php_version }}"
+    description: "repository for php"
+    baseurl: http://rpms.remirepo.net/enterprise/$releasever/{{ php_version }}/$basearch/
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: http://rpms.remirepo.net/RPM-GPG-KEY-remi
+    file: "{{ php_version }}"
+
+- name: Install PHP modules
+  yum:
+    name: "{{ item }}"
+    update_cache: yes
+    state: latest
+    enablerepo: "{{ php_version }}"
+  loop: "{{ php_modules }}"
+
+- name: Set ownership
+  file:
+    path: "/var/lib/php"
+    state: directory
+    recurse: yes
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+
+- name: Ensure php-fpm is started
+  service:
+    name: php-fpm
+    state: started
+    enabled: true
+
+- name: Copy php.ini
+  copy:
+    src: "roles/php/files/php.ini"
+    dest: "/etc/php.ini"
+    backup: yes
+  notify: restart php
+
+- name: Copy www.conf
+  template:
+    src: "roles/php/files/www.conf.j2"
+    dest: "/etc/php-fpm.d/www.conf"
+  notify: restart php

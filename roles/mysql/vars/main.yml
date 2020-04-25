@@ -1,0 +1,2 @@
+mysql_version: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+mysql_modules: [ 'mysql-community-server', 'mysql-community-client', 'mysql-community-devel', 'MySQL-python' ]

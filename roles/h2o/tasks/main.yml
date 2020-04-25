@@ -1,0 +1,46 @@
+---
+- name: Add h2o repository
+  yum_repository:
+    name: "h2o_rpm"
+    description: "Unofficial h2o rpm"
+    baseurl: https://dl.bintray.com/tatsushid/h2o-rpm/centos/$releasever/$basearch/
+    gpgcheck: 0
+    repo_gpgcheck: 0
+    enabled: 1
+
+- name: Install h2o
+  command: yum install -y h2o --nogpgcheck --enablerepo=h2o_rpm
+
+- name: Ensure h2o is started
+  service:
+    name: h2o
+    state: started
+    enabled: true
+
+- name: Create document root
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+    mode: '0755'
+
+- name: Create h2o config root
+  file:
+    path: "/etc/h2o/conf.d"
+    state: directory
+    mode: 0644
+
+- name: copy h2o.conf
+  template:
+    src: "roles/h2o/files/h2o.conf.j2"
+    dest: "/etc/h2o/h2o.conf"
+    mode: 0644
+  notify: restart h2o
+
+- name: Set up virtual host
+  template:
+    src: "roles/h2o/files/{{ http_host }}.conf.j2"
+    dest: "/etc/h2o/conf.d/{{ http_host }}.conf"
+    mode: 0644
+  notify: restart h2o

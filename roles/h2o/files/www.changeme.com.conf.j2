@@ -1,0 +1,24 @@
+"{{ http_host }}:80":
+  listen:
+    port: 80
+  paths:
+    /zabbix:
+      redirect: https://{{ http_host }}/zabbix
+    /grafana:
+      redirect: https://{{ http_host }}/grafana
+    /:
+      redirect: https://{{ http_host }}
+
+"{{ http_host }}:443":
+  listen:
+    port: 443
+    ssl:
+      certificate-file: /etc/ssl/private/{{ http_host }}.pem
+      key-file: /etc/ssl/private/privkey.pem
+      minimum-version: TLSv1.2
+
+  paths:
+    /zabbix:
+      file.dir: {{ zabbix_dir }}
+    /grafana:
+      proxy.reverse.url: http://127.0.0.1:3000/

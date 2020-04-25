@@ -1,0 +1,17 @@
+---
+- name: Install libselinux as prerequisite for SELinux Ansible module
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - libselinux-python
+    - libsemanage-python
+
+- name: Disable SELinux at next reboot
+  selinux:
+    state: disabled
+  register: disable_selinux
+
+- name: Reboot machine to apply the change
+  reboot:
+  when: disable_selinux is changed

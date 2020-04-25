@@ -1,0 +1,13 @@
+---
+# MySQL settings
+mysql_db: "zabbix"
+mysql_user: "zabbix"
+# passwords must contain at least 1 numeric character, 1 lowercase character, 1 uppercase character, and 1 special (nonalphanumeric) character
+mysql_root_password: "CHANGE_ME"
+mysql_password: "CHANGE_ME"
+
+# HTTP settings
+remote_web_user: "h2o"
+http_host: "www.changeme.com"
+http_conf: "www.changeme.com.conf"
+http_ip: 192.168.33.15

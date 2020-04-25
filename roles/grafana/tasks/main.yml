@@ -1,0 +1,29 @@
+---
+- name: Install fontconfig
+  yum:
+    name: fontconfig
+    state: present
+
+- name: Install grafana modules rpm
+  command: wget {{ grafana_version }}
+
+- name: Install grafana
+  yum:
+    name: grafana
+
+- name: Ensure grafana-server is started
+  service:
+    name: grafana-server
+    enabled: yes
+    state: started
+
+- name: install zabbix-plugin to grafana
+  shell: grafana-cli plugins install alexanderzobnin-zabbix-app
+  ignore_errors: yes
+
+- name: copy grafana.ini
+  template:
+    src: "roles/grafana/files/grafana.ini.j2"
+    dest: "/etc/grafana/grafana.ini"
+    mode: 0644
+  notify: restart grafana

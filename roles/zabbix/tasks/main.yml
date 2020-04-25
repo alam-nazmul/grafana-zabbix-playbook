@@ -1,0 +1,75 @@
+---
+- name: Download and unpack zabbix
+  unarchive:
+    src: "{{ zabbix_version }}"
+    dest: "/var/www/{{ http_host }}"
+    remote_src: yes
+    creates: "/var/www/{{ http_host }}/zabbix-4.4.7"
+
+- name: Copy zabbix conf
+  template:
+    src: "roles/zabbix/files/zabbix.conf.php.j2"
+    dest: "{{ zabbix_dir }}/conf/zabbix.conf.php"
+
+- name: Set ownership
+  file:
+    path: "/var/www/{{ http_host }}"
+    state: directory
+    recurse: yes
+    owner: "{{ remote_web_user }}"
+    group: "{{ remote_web_user }}"
+
+- name: Set permissions for directories
+  shell: "find {{ zabbix_dir }}/ -type d -exec chmod 750 {} \\;"
+
+- name: Set permissions for files
+  shell: "find {{ zabbix_dir }}/ -type f -exec chmod 640 {} \\;"
+
+- name: Install zabbix rpm file
+  yum:
+    name: "{{ zabbix_rpm_version }}"
+    state: present
+
+- name: Install zabbix modules
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - zabbix-server-mysql
+    - zabbix-agent
+
+# have to ignore php-mysql dep errors and force install...
+# See https://www.zabbix.com/forum/zabbix-help/368566-installation-failed
+- name: Install zabbix-web-mysql rpm file
+  command: wget https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-web-mysql-4.0.19-1.el7.noarch.rpm
+
+- name: Install zabbix-web-mysql
+  command: rpm -ivh --nodeps zabbix-web-mysql-4.0.19-1.el7.noarch.rpm
+  register: result
+  failed_when: result.rc == 1 and "already installed" not in result.stderr
+
+- name: Ensure zabbix is started
+  service:
+    name: zabbix-server
+    state: started
+    enabled: true
+  loop:
+    - zabbix-server
+    - zabbix-agent
+
+- name: Copy zabbix server conf
+  template:
+    src: roles/zabbix/files/zabbix_server.conf.j2
+    dest: "/etc/zabbix/zabbix_server.conf"
+  notify:
+    - restart zabbix-server
+
+- name: Copy zabbix agent conf
+  template:
+    src: "roles/zabbix/files/{{ item.src }}"
+    dest: "/etc/zabbix/{{ item.dest }}"
+  loop:
+    - { src: zabbix_agentd.conf.j2, dest: zabbix_agentd.conf }
+  notify:
+    - restart zabbix-agent

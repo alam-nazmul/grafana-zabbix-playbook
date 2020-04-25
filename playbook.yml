@@ -1,0 +1,17 @@
+#########################################################
+# Grafana/Zabbix on CentOS7
+#########################################################
+
+---
+- hosts: all
+  roles:
+    - common
+
+- hosts: web
+  roles:
+    - php
+    - ssl
+    - h2o
+    - zabbix
+    - mysql
+    - grafana

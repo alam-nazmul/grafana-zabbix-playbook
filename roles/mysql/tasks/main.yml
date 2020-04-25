@@ -1,0 +1,60 @@
+---
+- name: Install mysql rpm
+  yum:
+    name: "{{ mysql_version }}"
+    state: present
+
+- name: Install mysql modules
+  yum:
+    name: "{{ item }}"
+    state: installed
+    update_cache: yes
+  loop: "{{ mysql_modules }}"
+
+- name: Ensure mysql is started
+  service:
+    name: mysqld
+    state: started
+    enabled: true
+
+- name: Copy mysql config
+  template:
+    src: "roles/mysql/files/my.cnf.j2"
+    dest: "/etc/my.cnf"
+    backup: yes
+    mode: 644
+  notify: restart mysql
+
+- name: Check if root password is set
+  shell: >
+    mysqladmin -u root status -p'{{ mysql_root_password }}'
+  changed_when: false
+  failed_when: false
+  register: root_check_pwd
+
+- name: Get default root password
+  shell: cat /var/log/mysqld.log | grep 'temporary password' | awk '{print $13}'
+  register: mysql_default_password
+  no_log: true
+
+- name: Set new root password
+  shell: mysql -u root -p'{{ mysql_default_password.stdout_lines[0] }}' --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ mysql_root_password }}';"
+  when: root_check_pwd is not skipped and root_check_pwd.rc == 1
+
+- name: Create database for zabbix
+  mysql_db:
+    name: "{{ mysql_db }}"
+    state: present
+    encoding: utf8
+    collation: utf8_bin
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  when: root_check_pwd is not skipped and root_check_pwd.rc == 1
+
+- name: Create MySQL user for zabbix
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e " CREATE USER '{{ mysql_user }}'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ mysql_password }}';"
+  when: root_check_pwd is not skipped and root_check_pwd.rc == 1
+
+- name: Import initial schema and data
+  shell: zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -u'{{ mysql_user }}' -p'{{ mysql_password }}' zabbix
+  when: root_check_pwd is not skipped and root_check_pwd.rc == 1

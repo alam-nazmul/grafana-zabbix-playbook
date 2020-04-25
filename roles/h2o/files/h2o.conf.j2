@@ -1,0 +1,20 @@
+user: {{ remote_web_user }}
+pid-file: /var/run/h2o/h2o.pid
+
+gzip: ON
+
+file.custom-handler:
+  extension: .php
+  fastcgi.connect:
+    port: /var/run/php-fpm/www.sock
+    type: unix
+
+file.index: [ 'index.html', 'index.php' ]
+
+hosts:
+  <<: !file /etc/h2o/conf.d/{{ http_host }}.conf
+
+error-log: /var/log/h2o/all.error.log
+access-log: /var/log/h2o/all.access.log
+
+max-connections: 40960
