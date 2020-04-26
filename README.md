@@ -1,5 +1,8 @@
 # Grafana Zabbix Ansible Playbook
 
+![image](https://user-images.githubusercontent.com/6326478/80306541-eb755680-87fe-11ea-958e-5b2428c2bdc2.png)
+
+
 Ansible playbook + Vagrantfile for provisioning [Grafana](https://grafana.com/) and [Zabbix](https://zabbix.org/wiki/Main_Page) to a CentOS server. The playbook also installs H2O, PHP and mySQL.
 
 ## Getting started
@@ -19,7 +22,10 @@ ansible-playbook -i hosts playbook.yml
 2. Register those servers from Configuration > hosts.
 
 ## Grafana Configuration
-Enable zabbix-grafana plugin from plugin dashboard. Follow [the official guide](https://alexanderzobnin.github.io/grafana-zabbix/configuration/). You should be able to build your own monitoring dashboard on grafana using zabbix server now!
+1. Login with ID admin/PW admin.
+2. Enable zabbix-grafana plugin from plugin dashboard. Follow [the official guide](https://alexanderzobnin.github.io/grafana-zabbix/configuration/).
+
+You should be able to build your own monitoring dashboard on grafana using zabbix server now!
 
 ## Running on VM
 Simply run `vagrant up`. You'll need:
