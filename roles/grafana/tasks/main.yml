@@ -4,12 +4,22 @@
     name: fontconfig
     state: present
 
-- name: Install grafana modules rpm
-  command: wget {{ grafana_version }}
+- name: Add grafana repository
+  yum_repository:
+    name: grafana
+    description: "repository for grafana"
+    baseurl: https://packages.grafana.com/oss/rpm
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://packages.grafana.com/gpg.key
+    sslverify: 1
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    file: grafana
 
 - name: Install grafana
   yum:
     name: grafana
+    enablerepo: grafana
 
 - name: Ensure grafana-server is started
   service:

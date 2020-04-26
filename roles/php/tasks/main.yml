@@ -1,13 +1,9 @@
 ---
-- name: Add remi repository
-  yum_repository:
-    name: "{{ php_version }}"
-    description: "repository for php"
-    baseurl: http://rpms.remirepo.net/enterprise/$releasever/{{ php_version }}/$basearch/
-    enabled: 1
-    gpgcheck: 1
-    gpgkey: http://rpms.remirepo.net/RPM-GPG-KEY-remi
-    file: "{{ php_version }}"
+- name: Install the remi and ius repo from remote repo
+  yum:
+    name:
+      - "http://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+      - "https://centos7.iuscommunity.org/ius-release.rpm"
 
 - name: Install PHP modules
   yum:

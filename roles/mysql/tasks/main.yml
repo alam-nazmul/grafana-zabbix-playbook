@@ -58,3 +58,7 @@
 - name: Import initial schema and data
   shell: zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -u'{{ mysql_user }}' -p'{{ mysql_password }}' zabbix
   when: root_check_pwd is not skipped and root_check_pwd.rc == 1
+
+- name: Grand privileges to zabbix user
+  shell: mysql -u root -p'{{ mysql_root_password }}' -e "GRANT ALL PRIVILEGES ON zabbix.* TO '{{ mysql_user }}'@'localhost';"
+  when: root_check_pwd is not skipped and root_check_pwd.rc == 1
