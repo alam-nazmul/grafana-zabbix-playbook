@@ -1,2 +1,2 @@
 php_version: php74
-php_modules: [ 'php', 'php-pdo', 'php-mysqlnd', 'php-fpm', 'php-json', 'php-bcmath', 'php-xml', 'php-curl', 'php-ldap', 'php-opcache', 'php-mbstring', 'php-gd' ]
+php_modules: [ 'php', 'php-pdo', 'php-mysqlnd', 'php-fpm', 'php-json', 'php-bcmath', 'php-xml', 'php-curl', 'php-ldap', 'php-mbstring', 'php-gd' ]

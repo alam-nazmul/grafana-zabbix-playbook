@@ -8,9 +8,7 @@
 - name: Install PHP modules
   yum:
     name: "{{ item }}"
-    update_cache: yes
     state: latest
-    enablerepo: "{{ php_version }}"
   loop: "{{ php_modules }}"
 
 - name: Set ownership

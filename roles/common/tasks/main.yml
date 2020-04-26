@@ -1,5 +1,8 @@
 - name: include tasks/base.yml
   include_tasks: tasks/base.yml
 
+- name: include tasks/user.yml
+  include_tasks: tasks/user.yml
+
 - name: include tasks/disable-selinux.yml
   include_tasks: tasks/disable-selinux.yml

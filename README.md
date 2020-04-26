@@ -1,20 +1,17 @@
 # Grafana Zabbix Ansible Playbook
 
-![image](https://user-images.githubusercontent.com/6326478/80306541-eb755680-87fe-11ea-958e-5b2428c2bdc2.png)
+![image](https://user-images.githubusercontent.com/6326478/80307278-f92cdb00-8802-11ea-85eb-448c3fd75a1a.png)
 
 
 Ansible playbook + Vagrantfile for provisioning [Grafana](https://grafana.com/) and [Zabbix](https://zabbix.org/wiki/Main_Page) to a CentOS server. The playbook also installs H2O, PHP and mySQL.
 
 ## Getting started
 
-Edit `/group_vars/web.yml` and `hosts` and add your domain/hosts. Then run:
+1. Edit `/group_vars/web.yml` and `hosts` and add your domain/hosts
 
-```
-ansible-playbook -i hosts playbook.yml
-```
+2. run `ansible-playbook -i hosts playbook.yml`
 
-* Zabbix dashboard should be running at: `YOUR_DOMAIN/zabbix`
-* Grafana dashboard should be running at: `YOUR_DOMAIN/grafana`
+Zabbix dashboard should be running at `YOUR_DOMAIN/zabbix`. Grafana dashboard is at `YOUR_DOMAIN/grafana`.
 
 ## Zabbix Configuration
 

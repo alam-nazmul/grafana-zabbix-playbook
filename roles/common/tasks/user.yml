@@ -1,0 +1,14 @@
+---
+- name: Ensure group "h2o" exists
+  group:
+    name: h2o
+    state: present
+
+- name: Create user "h2o"
+  user:
+    name: h2o
+    groups: h2o
+    shell: /sbin/nologin
+    append: yes
+    comment: "user for h2o server"
+    state: present
